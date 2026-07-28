@@ -35,7 +35,7 @@ document.addEventListener('click' , function(event){
                 }
             }
             else{
-                if(val2.length === 10) {
+                if(val2.length >= 10) {
                     return 
                 }
                 if(value == '0' && (val2[0] == '0') ) {
@@ -87,7 +87,7 @@ document.addEventListener('click' , function(event){
 
             // Calculate res before new operator
             if (val1 && operator && val2) {
-                res = operations[operator](Number(val1), Number(val2))
+                res = Number(Math.round(operations[operator](Number(val1), Number(val2))).toFixed(4))
                 val1 = String(res)
                 val2 = ''
             }
@@ -189,10 +189,9 @@ iconContainer.addEventListener('click' , function(event){
         CalculatorIcon.classList.remove('d-none' ) 
         historyContainer.classList.remove('d-none')
         history = JSON.parse(localStorage.getItem('history')) || [] 
-        history.reverse()
         historyContainer.innerHTML = ''
         
-        history.forEach(item =>{
+        history.toReversed().forEach(item =>{
             historyContainer.innerHTML += `
             <div class = 'history-item' >
                 <p class = 'text-secondary p-0 m-0'>${item.val1} ${item.operator} ${item.val2}</p> 
