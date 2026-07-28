@@ -104,13 +104,21 @@ document.addEventListener('click' , function(event){
                     return 
                 }
                 res = operations[operator](Number(val1) , Number(val2) )  
+                userInput.innerHTML = res   
+                let historyObj = {
+                    val1:val1 , 
+                    val2:val2 , 
+                    operator : operator , 
+                    res:res 
+                }
+                history.push(historyObj) 
+                localStorage.setItem('history' , JSON.stringify(history)) 
+                console.log(history);
+
                 val1 = String(res)   
                 val2 = ''
                 operator = ''
-                userInput.innerHTML = res  
-                history.push(res) 
-                localStorage.setItem('history' , JSON.stringify(history)) 
-                console.log(history);
+                
                 
                 
             }
@@ -183,8 +191,15 @@ iconContainer.addEventListener('click' , function(event){
         history = JSON.parse(localStorage.getItem('history')) || [] 
         history.reverse()
         historyContainer.innerHTML = ''
-        historyContainer.innerHTML = history.map(item => {
-             return `<p class="text-light">${item}</p><hr/>`}).join('')
+        
+        history.forEach(item =>{
+            historyContainer.innerHTML += `
+            <div class = 'history-item' >
+                <p class = 'text-secondary p-0 m-0'>${item.val1} ${item.operator} ${item.val2}</p> 
+                <h4 class = 'text-light p-0 m-0 result-item'>= ${item.res}</h4>
+            </div>
+            `
+        })
         
 
     }
@@ -196,5 +211,20 @@ iconContainer.addEventListener('click' , function(event){
         historyContainer.classList.add('d-none') 
         
         
+    }
+})
+
+
+document.addEventListener('click' , function(event){
+    if(event.target.classList.contains('result-item')) {
+        console.log('hiii');
+        
+        val1 = event.target.textContent.slice(2,)
+        clock.classList.remove('d-none') 
+        calculatorContainer.classList.remove('d-none') 
+        CalculatorIcon.classList.add('d-none' ) 
+        historyContainer.classList.add('d-none')  
+
+        userInput.innerHTML = val1 
     }
 })
