@@ -11,7 +11,36 @@ const operations = {
     '÷': (n1, n2) => Number((n1 / n2).toFixed(4)),
     '%': (n1, n2) => Number(((n2 / n1) * 100).toFixed(4))
 }
-userInput.innerHTML = 0 
+userInput.innerHTML = 0
+
+//validtate function 
+function calculate(n1, n2, operator) {
+
+    if (operator == '÷' && n2 == 0) {
+        return { error: 'Cannot divide by zero' }
+    }
+
+    if (operator == '%' && n1 == 0) {
+        return { error: 'Invalid percentage' }
+    }
+
+    const operation = operations[operator]
+
+    if (!operation) {
+        return { error: 'Invalid operation' }
+    }
+
+    const result = operation(n1, n2)
+
+    if (!Number.isFinite(result)) {
+        return { error: 'Error' }
+    }
+
+    return {
+        result: Number(result.toFixed(4))
+    }
+}
+
 
 document.addEventListener('click' , function(event){
     const button =  event.target.closest('button')
@@ -98,31 +127,42 @@ document.addEventListener('click' , function(event){
             }
         }
 
-        else if(button.classList.contains('equal')) {
-            if(val1 && val2 && operator) { 
-                if ( (val1.length == 1 && val1[0] == '-' )  ||  (val2.length == 1 && val2[0] =='-')) {
-                    return 
-                }
-                res = operations[operator](Number(val1) , Number(val2) )  
-                userInput.innerHTML = res   
-                let historyObj = {
-                    val1:val1 , 
-                    val2:val2 , 
-                    operator : operator , 
-                    res:res 
-                }
-                history.push(historyObj) 
-                localStorage.setItem('history' , JSON.stringify(history)) 
-                console.log(history);
+        else if (button.classList.contains('equal')) {
 
-                val1 = String(res)   
+            if (val1 && val2 && operator) {
+
+                if (val1 === '-' || val2 === '-') {
+                    return
+                }
+
+                const calculation = calculate( Number(val1), Number(val2), operator )
+
+                if (calculation.error) {
+                    userInput.textContent = calculation.error
+
+                    val1 = ''
+                    val2 = ''
+                    operator = ''
+                    res = ''
+                    return
+                }
+
+                res = calculation.result
+                userInput.textContent = res
+
+                const historyObj = {
+                    val1,
+                    val2,
+                    operator,
+                    res
+                }
+
+                history.push(historyObj)
+                localStorage.setItem('history', JSON.stringify(history))
+                val1 = String(res)
                 val2 = ''
                 operator = ''
-                
-                
-                
             }
-            
         }
 
         else if(button.classList.contains('wrong')) {
